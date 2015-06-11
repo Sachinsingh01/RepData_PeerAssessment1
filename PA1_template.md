@@ -17,12 +17,14 @@ Below are the details:
 ## Loading and preprocessing the data
 
 ### Read CSV data
-```{r}
+
+```r
 ActivityData <- read.csv("activity.csv", header = T)
 ```
 
 ### Remove NA records
-```{r}
+
+```r
 # create a subset. Remove NA records
 ActivityDataWithoutNA <- subset(ActivityData,
 						is.na(ActivityData$steps) == F)
@@ -34,7 +36,8 @@ ActivityDataWithoutNA <- subset(ActivityData,
 
 Aggregate the information
 
-```{r}
+
+```r
 library(plyr)
 totalNoPerDay <- ddply(ActivityDataWithoutNA,
 					   .(date),
@@ -44,7 +47,8 @@ totalNoPerDay <- ddply(ActivityDataWithoutNA,
 
 Plot the information
 
-```{r}
+
+```r
 hist(totalNoPerDay$steps,
      breaks = 20,
      main="Number of Steps",
@@ -53,12 +57,26 @@ hist(totalNoPerDay$steps,
 	 ylab="Number of Days")
 ```
 
+![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
+
 ### Generate the mean and median of total number of steps taken per day
 
 
-```{r}
+
+```r
 mean(totalNoPerDay$steps)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(totalNoPerDay$steps)
+```
+
+```
+## [1] 10765
 ```
 
 ## What is the average daily activity pattern?
@@ -66,7 +84,8 @@ median(totalNoPerDay$steps)
 ### Plot the information of the 5-minute interval and the average number of steps taken of all days.
 
 calcluating the average number of steps taken in each 5-minite intervals
-```{r}
+
+```r
 averagePerIntv <- ddply(ActivityDataWithoutNA,
 						.(interval),
 						summarise,
@@ -75,7 +94,8 @@ averagePerIntv <- ddply(ActivityDataWithoutNA,
 
 Generate the plot
 
-```{r}
+
+```r
 plot(averagePerIntv$interval,
      averagePerIntv$steps,
 	 main="Average Daily Activity Pattern",
@@ -93,22 +113,36 @@ axis(1,
 axis(2)
 ```
 
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png) 
+
 ### Average across all the days in the dataset, contains the maximum number of steps?
 
-```{r}
+
+```r
 averagePerIntv[which.max(averagePerIntv$steps),]
+```
+
+```
+##     interval    steps
+## 104      835 206.1698
 ```
 
 ## Imputing missing values
 
 ### Total number of NA in the dataset
-```{r}
+
+```r
 sum(is.na(ActivityData$steps))
+```
+
+```
+## [1] 2304
 ```
 
 ### Create a new dataset with inclusion of NA fields.
 
-```{r}
+
+```r
 ActData <- ActivityData
 
 for (i in 1:nrow(ActData)){
@@ -123,7 +157,8 @@ ActData <- arrange(ActData, interval)
 
 Calculate the total number of steps taken per day
 
-```{r}
+
+```r
 totalNoPerDayActData <- ddply(ActData,
 							  .(date),
 							  summarise,
@@ -132,7 +167,8 @@ totalNoPerDayActData <- ddply(ActData,
 
 Generate the plot
 
-```{r}
+
+```r
 hist(totalNoPerDayActData$steps,
      breaks = 20,
 	 main="Number of Steps",
@@ -140,21 +176,33 @@ hist(totalNoPerDayActData$steps,
 	 ylab = "Number of Days", col="red")
 ```
 
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png) 
+
 Calculate and report the mean and median total number of steps taken per day on the ActData dataset
-```{r}
+
+```r
 mean(totalNoPerDayActData$steps)
 ```
 
-```{r}
+```
+## [1] 10766.19
+```
 
+
+```r
 median(totalNoPerDayActData$steps)
+```
+
+```
+## [1] 10766.19
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
 ### Create a variable in the dataset for weekdays and weekend
 
-```{r}
+
+```r
 ActData$weekdays <- weekdays(as.Date(ActData$date))
 ActData$weekdays <- ifelse(ActData$weekdays %in% c("Saturday", "Sunday"),"weekend", "weekday")
 ```
@@ -163,13 +211,15 @@ ActData$weekdays <- ifelse(ActData$weekdays %in% c("Saturday", "Sunday"),"weeken
 
 Calculate the avg
 
-```{r}
+
+```r
 average <- ddply(ActData, .(interval, weekdays), summarise, steps=mean(steps))
 ```
 
 Generate the plot
 
-```{r}
+
+```r
 library(lattice)
 xyplot(steps ~ interval | weekdays,
        data = average,
@@ -179,6 +229,8 @@ xyplot(steps ~ interval | weekdays,
 	   col = "green",
 	   type="l")
 ```
+
+![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17-1.png) 
 
 ### End of project assignment
 
